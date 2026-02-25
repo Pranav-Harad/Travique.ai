@@ -25,7 +25,7 @@ export default function Landing() {
                     <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
                         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
                             <Plane className="w-8 h-8 text-white" />
-                            <span className="text-2xl font-display font-bold text-white tracking-wide">Travique</span>
+                            <span className="text-2xl font-display font-bold text-white tracking-wide">Travique.ai</span>
                         </div>
 
                         <div className="hidden md:flex items-center gap-8">
@@ -86,7 +86,7 @@ export default function Landing() {
                 {/* Features Section */}
                 <section id="features" className="py-24 px-6 bg-black relative border-y border-white/5">
                     <div className="max-w-7xl mx-auto">
-                        <h2 className="text-4xl md:text-5xl font-display font-bold text-center mb-16 text-white">Why Choose Travique?</h2>
+                        <h2 className="text-4xl md:text-5xl font-display font-bold text-center mb-16 text-white">Why Choose Travique.ai?</h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                             {[
@@ -153,10 +153,10 @@ export default function Landing() {
                     <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
                         <div className="flex items-center gap-2">
                             <Plane className="w-6 h-6 text-white" />
-                            <span className="text-xl font-display font-bold text-white tracking-wider">Travique</span>
+                            <span className="text-xl font-display font-bold text-white tracking-wider">Travique.ai</span>
                         </div>
                         <div className="text-[#9CA3AF] text-sm">
-                            &copy; {new Date().getFullYear()} Travique. All rights reserved.
+                            &copy; {new Date().getFullYear()} Travique.ai. All rights reserved.
                         </div>
                         <div className="flex items-center gap-6">
                             <a href="https://github.com" target="_blank" rel="noreferrer" className="text-[#9CA3AF] hover:text-[#F3F4F6] transition-colors p-2 hover:bg-white/5 rounded-full">

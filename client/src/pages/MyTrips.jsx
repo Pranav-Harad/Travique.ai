@@ -62,7 +62,7 @@ function MyTrips() {
         const doc = new jsPDF();
         doc.setFont("helvetica", "bold");
         doc.setFontSize(20);
-        doc.text(`Travique - Itinerary for ${trip.destination}`, 15, 20);
+        doc.text(`Travique.ai - Itinerary for ${trip.destination}`, 15, 20);
 
         doc.setFont("helvetica", "normal");
         doc.setFontSize(12);
@@ -83,7 +83,7 @@ function MyTrips() {
             yOffset += 7;
         });
 
-        doc.save(`Travique_${trip.destination}_Itinerary.pdf`);
+        doc.save(`Travique.ai_${trip.destination}_Itinerary.pdf`);
     };
 
     if (loading) {

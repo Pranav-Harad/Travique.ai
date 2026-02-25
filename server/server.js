@@ -18,11 +18,13 @@ app.use(clerkMiddleware());
 app.use("/api/trips", require("./routes/tripRoutes"));
 
 app.get("/", (req, res) => {
-  res.send("🚀 Travique API Running");
+  res.send("🚀 Travique.ai API Running");
 });
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () =>
-  console.log(`🚀 Server running on port ${PORT}`)
-);
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+}
+
+module.exports = app;

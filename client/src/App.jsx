@@ -19,13 +19,13 @@ function App() {
         <Route path="/" element={<Landing />} />
 
         {/* Other Routes wrapped with global Navbar */}
-        <Route path="/login/*" element={<div className="flex flex-col min-h-screen"><Navbar /><main className="flex-grow"><Login /></main></div>} />
-        <Route path="/signup/*" element={<div className="flex flex-col min-h-screen"><Navbar /><main className="flex-grow"><Signup /></main></div>} />
+        <Route path="/login/*" element={<div className="flex flex-col min-h-screen bg-black"><Navbar /><main className="flex-grow"><Login /></main></div>} />
+        <Route path="/signup/*" element={<div className="flex flex-col min-h-screen bg-black"><Navbar /><main className="flex-grow"><Signup /></main></div>} />
 
         <Route
           path="/dashboard"
           element={
-            <div className="flex flex-col min-h-screen">
+            <div className="flex flex-col min-h-screen bg-black">
               <Navbar />
               <main className="flex-grow">
                 <ProtectedRoute>
@@ -38,7 +38,7 @@ function App() {
         <Route
           path="/create-trip"
           element={
-            <div className="flex flex-col min-h-screen">
+            <div className="flex flex-col min-h-screen bg-black">
               <Navbar />
               <main className="flex-grow">
                 <ProtectedRoute>
@@ -51,7 +51,7 @@ function App() {
         <Route
           path="/my-trips"
           element={
-            <div className="flex flex-col min-h-screen">
+            <div className="flex flex-col min-h-screen bg-black">
               <Navbar />
               <main className="flex-grow">
                 <ProtectedRoute>
