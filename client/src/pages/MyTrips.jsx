@@ -6,13 +6,27 @@ import { useAuth } from '@clerk/clerk-react';
 import ReactMarkdown from 'react-markdown';
 import PlaneLoader from '../components/PlaneLoader';
 import UnsplashImage from '../components/UnsplashImage';
-import { MapPin, Plane, IndianRupee, Clock, Users, Bus, Target, Trash2 } from 'lucide-react';
+import { MapPin, Plane, IndianRupee, Clock, Users, Bus, Target, Trash2, Languages, Loader2 } from 'lucide-react';
+
+const INDIAN_LANGUAGES = [
+    { code: 'hin_Deva', name: 'Hindi' },
+    { code: 'ben_Beng', name: 'Bengali' },
+    { code: 'tam_Taml', name: 'Tamil' },
+    { code: 'tel_Telu', name: 'Telugu' },
+    { code: 'mar_Deva', name: 'Marathi' },
+    { code: 'guj_Gujr', name: 'Gujarati' },
+    { code: 'mal_Mlym', name: 'Malayalam' },
+    { code: 'urd_Arab', name: 'Urdu' },
+    { code: 'pan_Guru', name: 'Punjabi' }
+];
 
 function MyTrips() {
     const [trips, setTrips] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [expandedTrip, setExpandedTrip] = useState(null);
+    const [targetLang, setTargetLang] = useState('hin_Deva');
+    const [translatingTripId, setTranslatingTripId] = useState(null);
     const { getToken } = useAuth();
     const navigate = useNavigate();
 
@@ -55,6 +69,32 @@ function MyTrips() {
                 console.error("Failed to delete trip:", err);
                 alert("Failed to delete trip. Please try again.");
             }
+        }
+    };
+
+    const handleTranslate = async (trip) => {
+        setTranslatingTripId(trip._id);
+        setError('');
+
+        try {
+            const token = await getToken();
+            const res = await api.post('/translate', {
+                text: trip.itinerary,
+                target_lang: targetLang
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            setTrips(trips.map(t =>
+                t._id === trip._id
+                    ? { ...t, itinerary: res.data.translatedText }
+                    : t
+            ));
+        } catch (err) {
+            console.error(err);
+            setError('Translation failed. Please try again.');
+        } finally {
+            setTranslatingTripId(null);
         }
     };
 
@@ -160,6 +200,29 @@ function MyTrips() {
                                             {trip.transportMode && <div><span className="text-white font-semibold flex items-center gap-2"><Bus size={16} className="text-gray-400" /> Transport:</span> {trip.transportMode}</div>}
                                             <div className="md:col-span-3 mt-2 pt-2 border-t border-white/10 flex items-start gap-2"><Target size={16} className="text-gray-400 mt-1 shrink-0" /><span className="text-white font-semibold">Focus:</span> <span className="text-gray-300">{trip.interests}</span></div>
                                         </div>
+
+                                        <div className="flex justify-end mb-6">
+                                            <div className="flex bg-zinc-800/80 p-1 rounded-full border border-white/10 items-center">
+                                                <Languages size={16} className="text-gray-400 ml-2" />
+                                                <select
+                                                    value={targetLang}
+                                                    onChange={(e) => setTargetLang(e.target.value)}
+                                                    className="bg-transparent text-sm text-gray-300 font-medium focus:outline-none focus:ring-0 ml-1 py-1 cursor-pointer pr-4 appearance-none"
+                                                >
+                                                    {INDIAN_LANGUAGES.map(lang => (
+                                                        <option key={lang.code} value={lang.code} className="bg-zinc-800">{lang.name}</option>
+                                                    ))}
+                                                </select>
+                                                <button
+                                                    onClick={() => handleTranslate(trip)}
+                                                    disabled={translatingTripId === trip._id}
+                                                    className="px-4 py-1.5 bg-blue-600/20 text-blue-400 min-w-[100px] rounded-full hover:bg-blue-600/30 transition shadow-sm text-xs font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
+                                                >
+                                                    {translatingTripId === trip._id ? <Loader2 size={14} className="animate-spin" /> : "Translate"}
+                                                </button>
+                                            </div>
+                                        </div>
+
                                         <div className="text-gray-300 space-y-6">
                                             <ReactMarkdown
                                                 components={{

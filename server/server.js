@@ -16,6 +16,7 @@ app.use(clerkMiddleware());
 
 // Routes
 app.use("/api/trips", require("./routes/tripRoutes"));
+app.use("/api/translate", require("./routes/translate"));
 
 app.get("/", (req, res) => {
   res.send("🚀 Travique.ai API Running");

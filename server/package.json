@@ -12,6 +12,7 @@
   "dependencies": {
     "@clerk/express": "^1.7.74",
     "@google/generative-ai": "^0.24.1",
+    "@huggingface/inference": "^4.13.13",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",

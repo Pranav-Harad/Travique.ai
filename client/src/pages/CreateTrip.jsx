@@ -5,7 +5,19 @@ import { useAuth } from '@clerk/clerk-react';
 import ReactMarkdown from 'react-markdown';
 import PlaneLoader from '../components/PlaneLoader';
 import UnsplashImage from '../components/UnsplashImage';
-import { MapPin, Plane, IndianRupee, Clock, Users, Bus, Target } from 'lucide-react';
+import { MapPin, Plane, IndianRupee, Clock, Users, Bus, Target, Languages, Loader2 } from 'lucide-react';
+
+const INDIAN_LANGUAGES = [
+    { code: 'hin_Deva', name: 'Hindi' },
+    { code: 'ben_Beng', name: 'Bengali' },
+    { code: 'tam_Taml', name: 'Tamil' },
+    { code: 'tel_Telu', name: 'Telugu' },
+    { code: 'mar_Deva', name: 'Marathi' },
+    { code: 'guj_Gujr', name: 'Gujarati' },
+    { code: 'mal_Mlym', name: 'Malayalam' },
+    { code: 'urd_Arab', name: 'Urdu' },
+    { code: 'pan_Guru', name: 'Punjabi' }
+];
 
 function CreateTrip() {
     const [startLocation, setStartLocation] = useState('');
@@ -19,6 +31,10 @@ function CreateTrip() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [generatedTrip, setGeneratedTrip] = useState(null);
+
+    // Translation state
+    const [targetLang, setTargetLang] = useState('hin_Deva');
+    const [isTranslating, setIsTranslating] = useState(false);
 
     const { getToken } = useAuth();
     const navigate = useNavigate();
@@ -51,18 +67,67 @@ function CreateTrip() {
         }
     };
 
+    const handleTranslate = async () => {
+        if (!generatedTrip) return;
+        setIsTranslating(true);
+        setError('');
+
+        try {
+            const token = await getToken();
+            const res = await api.post('/translate', {
+                text: generatedTrip.itinerary,
+                target_lang: targetLang
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            // Update the generatedTrip's itinerary with the translated text
+            setGeneratedTrip(prev => ({
+                ...prev,
+                itinerary: res.data.translatedText
+            }));
+        } catch (err) {
+            console.error(err);
+            setError('Translation failed. Please try again.');
+        } finally {
+            setIsTranslating(false);
+        }
+    };
+
     if (generatedTrip) {
         return (
             <div className="min-h-screen bg-black text-[#F3F4F6] p-8 selection:bg-white selection:text-black">
                 <div className="max-w-4xl mx-auto bg-zinc-900 border border-white/10 rounded-2xl shadow-xl p-8">
                     <div className="flex justify-between items-center mb-6">
                         <h1 className="text-3xl font-display font-bold text-white">Your Trip to {generatedTrip.destination}</h1>
-                        <button
-                            onClick={() => navigate('/dashboard')}
-                            className="px-5 py-2 bg-white/10 text-white rounded-full hover:bg-white/20 transition backdrop-blur text-sm font-semibold border border-white/5"
-                        >
-                            Back to Dashboard
-                        </button>
+                        <div className="flex items-center gap-3">
+                            <div className="flex bg-zinc-800/80 p-1 rounded-full border border-white/10 items-center">
+                                <Languages size={16} className="text-gray-400 ml-2" />
+                                <select
+                                    value={targetLang}
+                                    onChange={(e) => setTargetLang(e.target.value)}
+                                    className="bg-transparent text-sm text-gray-300 font-medium focus:outline-none focus:ring-0 ml-1 py-1 cursor-pointer pr-4 appearance-none"
+                                >
+                                    {INDIAN_LANGUAGES.map(lang => (
+                                        <option key={lang.code} value={lang.code} className="bg-zinc-800">{lang.name}</option>
+                                    ))}
+                                </select>
+                                <button
+                                    onClick={handleTranslate}
+                                    disabled={isTranslating}
+                                    className="px-3 py-1 bg-blue-600/20 text-blue-400 min-w-[90px] rounded-full hover:bg-blue-600/30 transition shadow-sm text-xs font-semibold flex items-center justify-center gap-1 disabled:opacity-50"
+                                >
+                                    {isTranslating ? <Loader2 size={12} className="animate-spin" /> : "Translate"}
+                                </button>
+                            </div>
+
+                            <button
+                                onClick={() => navigate('/dashboard')}
+                                className="px-5 py-2 bg-white/10 text-white rounded-full hover:bg-white/20 transition backdrop-blur text-sm font-semibold border border-white/5"
+                            >
+                                Back to Dashboard
+                            </button>
+                        </div>
                     </div>
 
                     <div className="bg-black border border-white/10 p-5 rounded-xl mb-8 grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-300">
