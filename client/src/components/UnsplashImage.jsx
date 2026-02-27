@@ -42,6 +42,7 @@ export default function UnsplashImage({ query }) {
             <img
                 src={imageUrl}
                 alt={query}
+                crossOrigin="anonymous"
                 className="w-full h-auto object-cover max-h-80 transition-transform duration-700 group-hover:scale-105"
                 loading="lazy"
             />

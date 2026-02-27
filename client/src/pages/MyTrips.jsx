@@ -104,38 +104,27 @@ function MyTrips() {
             return;
         }
 
-        // Create a wrapper for off-screen rendering
-        const printContainer = document.createElement('div');
-        printContainer.style.position = 'absolute';
-        printContainer.style.left = '-9999px';
-        printContainer.style.top = '0';
-        printContainer.style.width = '800px'; // Fixed width for consistent PDF layout
-        printContainer.style.backgroundColor = '#050505';
-        printContainer.style.color = '#F3F4F6';
-
-        // Clone the timeline element
-        const clonedElement = sourceElement.cloneNode(true);
-
-        // Strip out scrollbars and height restrictions from the clone
-        clonedElement.style.height = 'auto';
-        clonedElement.style.overflow = 'visible';
-        clonedElement.style.maxHeight = 'none';
-        clonedElement.classList.remove('overflow-y-auto', 'custom-scrollbar', 'lg:w-[55%]', 'xl:w-[60%]', 'w-full');
-        clonedElement.style.width = '100%';
-
-        printContainer.appendChild(clonedElement);
-        document.body.appendChild(printContainer);
+        // Save original styles to restore them later
+        const originalStyles = {
+            height: sourceElement.style.height,
+            overflow: sourceElement.style.overflow,
+            maxHeight: sourceElement.style.maxHeight,
+        };
 
         try {
-            // Wait a tick for styles to apply
-            await new Promise(resolve => setTimeout(resolve, 100));
+            // Temporarily strip out scrollbars and height restrictions so it fully expands
+            sourceElement.style.height = 'max-content';
+            sourceElement.style.overflow = 'visible';
+            sourceElement.style.maxHeight = 'none';
+            sourceElement.classList.remove('overflow-y-auto');
 
-            const imgData = await toJpeg(printContainer, {
+            // Wait a tick for the DOM to fully expand and paint
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            const imgData = await toJpeg(sourceElement, {
                 quality: 0.95,
                 backgroundColor: '#050505',
                 pixelRatio: 2,
-                width: printContainer.scrollWidth,
-                height: printContainer.scrollHeight
             });
 
             const pdf = new jsPDF({
@@ -154,7 +143,7 @@ function MyTrips() {
             pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, pdfHeight);
 
             let heightLeft = pdfHeight - pageHeight;
-            while (heightLeft >= 0) {
+            while (heightLeft > 0) {
                 position = heightLeft - pdfHeight;
                 pdf.addPage();
                 pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, pdfHeight);
@@ -166,8 +155,11 @@ function MyTrips() {
             console.error("Error generating PDF", error);
             alert("There was an issue generating the PDF. Please try again.");
         } finally {
-            // Clean up the DOM
-            document.body.removeChild(printContainer);
+            // Restore the original styles
+            sourceElement.style.height = originalStyles.height;
+            sourceElement.style.overflow = originalStyles.overflow;
+            sourceElement.style.maxHeight = originalStyles.maxHeight;
+            sourceElement.classList.add('overflow-y-auto');
         }
     };
 
