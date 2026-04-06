@@ -102,3 +102,8 @@ Feel free to check [issues page](https://github.com/Pranav-Harad/Travique.ai/iss
   <br/>
   <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=footer" />
 </div>
+
+## Author 👨‍💻
+Made with ❤️ by **Pranav**  
+📧 Email: [pranavharad64@gmail.com](mailto:pranavharad64@gmail.com)  
+🔗 LinkedIn: [www.linkedin.com/in/pranav-harad-667070268](https://www.linkedin.com/in/pranav-harad-667070268)
